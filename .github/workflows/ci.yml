@@ -37,6 +37,6 @@ jobs:
           docker build -f Dockerfile -t job-queue-api .
 
       - name : Build worker Docker Image
-        working-directory: ./worker
+        working-directory: ./backend
         run: |
           docker build -f Dockerfile.worker -t job-queue-worker . 
