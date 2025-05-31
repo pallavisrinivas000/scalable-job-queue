@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./backend
         run: |
-          poetry install 
+          poetry install --no-root
       
       - name: Run Lint
         working-directory: ./backend
