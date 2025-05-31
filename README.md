@@ -182,12 +182,6 @@ You can verify the images by going to AWS Console → ECR → Your Repository �
 
 ---
 
-## 📄 License
-
-MIT License. See [`LICENSE`](LICENSE) file for details.
-
----
-
 ## 🙋‍♀️ Contributions
 
 Feel free to fork the repo, submit issues or pull requests. All contributions are welcome!
