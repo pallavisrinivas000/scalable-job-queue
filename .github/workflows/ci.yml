@@ -35,7 +35,7 @@ jobs:
         working-directory: ./backend
         run: |
           pip install ruff
-          ruff app worker
+          ruff format backend/ --check
 
       - name : Build API Docker Image
         working-directory: ./backend
