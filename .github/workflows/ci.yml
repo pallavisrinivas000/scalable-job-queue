@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: |
+          poetry install 
+      
+      - name: Run Lint
+        working-directory: ./backend
+        run: |
+          pip install ruff
+          ruff app worker
+
+      - name : Build API Docker Image
+        working-directory: ./backend
+        run: |
+          docker build -f Dockerfile -t job-queue-api .
+
+      - name : Build worker Docker Image
+        working-directory: ./worker
+        run: |
+          docker build -f Dockerfile.worker -t job-queue-worker . 
