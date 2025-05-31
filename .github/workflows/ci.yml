@@ -16,7 +16,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
       SQS_QUEUE_URL: ${{ secrets.SQS_QUEUE_URL }}
-      
+      ECR_API_REPO: 256595875099.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/job-queue-api
+      ECR_WORKER_REPO: 256595875099.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/job-queue-worker
+
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,13 +38,21 @@ jobs:
         working-directory: ./backend
         run: |
           poetry install --no-root
+        
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with: 
+          region : ${{ secrets.AWS_REGION }}
+
 
       - name : Build API Docker Image
         working-directory: ./backend
         run: |
           docker build -f Dockerfile -t job-queue-api .
+          docker push $ECR_API_REPO:latest
 
       - name : Build worker Docker Image
         working-directory: ./backend
         run: |
           docker build -f Dockerfile.worker -t job-queue-worker . 
+          docker push $ECR_WORKER_REPO:latest
