@@ -1,7 +1,12 @@
- Scalable Job Queue System
-A production-ready, containerized job queue system using FastAPI, AWS SQS, Podman/Docker, and GitHub Actions for CI/CD. Designed to decouple job submission (API) from job processing (Worker) using a message queue pattern.
+# 🚀 Scalable Job Queue System
 
-🧩 Project Structure
+A production-ready, containerized **job queue system** using **FastAPI**, **AWS SQS**, **Podman/Docker**, and **GitHub Actions** for CI/CD. Designed to decouple job submission (API) from job processing (Worker) using a message queue pattern.
+
+---
+
+## 🧩 Project Structure
+
+```
 .
 ├── README.md
 ├── backend
@@ -15,63 +20,72 @@ A production-ready, containerized job queue system using FastAPI, AWS SQS, Podma
 │   └── pyproject.toml           # Project dependencies
 ├── docker-compose.yml          # Local dev orchestration
 └── .github/workflows/          # CI/CD workflows
+```
 
+---
 
-🌐 Features
+## 🌐 Features
 
-API (FastAPI): Accepts job submissions via /submit-job endpoint.
+- ✅ Job submission via FastAPI `/submit-job` endpoint
+- 🔄 Asynchronous job processing using a separate worker
+- 📨 AWS SQS message queuing
+- 📦 Fully containerized with Docker/Podman
+- 🤖 GitHub Actions CI/CD pipeline
+- 🔐 Secure AWS access via GitHub Secrets
 
-Worker (Python): Listens to SQS, processes jobs.
+---
 
-AWS SQS: Handles message queueing between API and worker.
+## ⚙️ Technologies Used
 
-Containerized: Build and run with Podman or Docker.
+- **FastAPI** – for building the job submission API  
+- **Python 3.11** – runtime environment  
+- **Boto3** – AWS SDK for interacting with SQS  
+- **AWS SQS** – decoupled message queue  
+- **AWS ECR** – container registry  
+- **Poetry** – dependency management  
+- **Podman / Docker** – containerization  
+- **GitHub Actions** – continuous integration and deployment  
 
-GitHub Actions CI/CD: Automates build and deployment to AWS ECR.
+---
 
-Secure: Uses GitHub secrets for AWS credentials.
+## 🚀 Getting Started
 
-⚙️ Technologies Used
-FastAPI – for building the job submission API
+### 1. Clone the Repository
 
-Python 3.11 – runtime environment
-
-Boto3 – AWS SDK for interacting with SQS
-
-AWS SQS – decoupled message queue
-
-AWS ECR – container registry
-
-Poetry – dependency management
-
-Podman / Docker – containerization
-
-GitHub Actions – continuous integration and deployment
-
-🚀 Getting Started
-1. Clone the Repository
+```bash
 git clone https://github.com/your-username/scalable-job-queue.git
 cd scalable-job-queue
-2. Set Up Environment Variables
-Create a .env file inside backend/ with the following:
+```
+
+### 2. Set Up Environment Variables
+
+Create a `.env` file inside `backend/` with the following:
+
+```env
 AWS_ACCESS_KEY=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 AWS_REGION=your_aws_region
 SQS_QUEUE_URL=https://sqs.<region>.amazonaws.com/<account_id>/<queue_name>
-3. Run Locally (with Docker Compose)
+```
+
+### 3. Run Locally (with Docker Compose)
+
+```bash
 cd backend
 podman-compose up --build
+```
+
 This will start:
+- `job-queue-api` on port `8000`
+- `job-queue-worker` running in background
 
-job-queue-api on port 8000
+---
 
-job-queue-worker running in background
+## 🧪 API Usage
 
-🧪 API Usage
-Submit Job
-bash
-Copy
-Edit
+### Submit Job
+
+```bash
 curl -X POST http://localhost:8000/submit-job \
   -H "Content-Type: application/json" \
   -d '{
@@ -81,54 +95,99 @@ curl -X POST http://localhost:8000/submit-job \
       "subject": "Hello"
     }
   }'
-Expected Response
-json
-Copy
-Edit
+```
+
+### Expected Response
+
+```json
 {
   "message": "Job submitted successfully",
   "job_id": "e.g. 1c7a4e5a-..."
 }
-🛠️ GitHub Actions CI/CD
-CI Workflow: Runs tests, builds images, and pushes to AWS ECR on every push to master.
+```
 
-Deploy Workflow: Pushes updated API and Worker images to ECR.
+---
 
-GitHub Secrets needed:
+## 🛠️ GitHub Actions CI/CD
 
-AWS_ACCESS_KEY
+This project uses two GitHub Actions workflows:
 
-AWS_SECRET_ACCESS_KEY
+- **CI Workflow**:
+  - Lints and builds backend
+  - Builds & pushes Docker images for API and Worker to ECR
 
-AWS_REGION
+- **Deploy Workflow (optional)**:
+  - Can be configured to deploy to ECS or another orchestrator
 
-SQS_QUEUE_URL
+### Required GitHub Secrets
 
-🐳 Building Manually
-Build and Run API
-bash
-Copy
-Edit
+Add the following in your repo settings under **Settings > Secrets and variables > Actions**:
+
+- `AWS_ACCESS_KEY`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
+- `SQS_QUEUE_URL`
+
+---
+
+## 🐳 Building Manually
+
+### Build and Run API
+
+```bash
 cd backend
 podman build -f Dockerfile -t job-queue-api .
 podman run -p 8000:8000 job-queue-api
-Build and Run Worker
-bash
-Copy
-Edit
+```
+
+### Build and Run Worker
+
+```bash
 cd backend
 podman build -f Dockerfile.worker -t job-queue-worker .
 podman run job-queue-worker
-📦 Deployment
-Pushed Docker images are stored in Amazon ECR
+```
 
-You can deploy them to ECS, EC2, Kubernetes, or other cloud runtimes
+---
 
-✅ TODOs
- Add retry & dead-letter queue logic
+## 📦 Deployment (AWS ECR)
 
- Unit tests for API and Worker
+1. GitHub Actions pushes `job-queue-api` and `job-queue-worker` images to ECR
+2. You can deploy them to:
+   - ECS (Fargate or EC2-backed)
+   - EKS (Kubernetes)
+   - EC2 instances manually
 
- Add support for task types and handlers
+You can verify the images by going to AWS Console → ECR → Your Repository → Tags.
 
- ECS deployment with Terraform or CDK
+---
+
+## 💰 AWS Costs
+
+- **SQS**: Free for the first 1 million requests per month
+- **ECR**: Charged based on GB stored and data transferred
+- **IAM User**: No cost, but don't keep long-lived credentials unused
+
+🛑 **Delete unused images to avoid storage charges**
+
+---
+
+## ✅ TODOs
+
+- [ ] Add retry & dead-letter queue logic
+- [ ] Add support for multiple job types and dynamic handlers
+- [ ] Add ECS deployment using Terraform/CDK
+- [ ] Add automated tests
+- [ ] Add Prometheus/Grafana monitoring
+
+---
+
+## 📄 License
+
+MIT License. See [`LICENSE`](LICENSE) file for details.
+
+---
+
+## 🙋‍♀️ Contributions
+
+Feel free to fork the repo, submit issues or pull requests. All contributions are welcome!
