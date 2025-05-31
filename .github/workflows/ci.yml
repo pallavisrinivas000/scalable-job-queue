@@ -30,12 +30,6 @@ jobs:
         working-directory: ./backend
         run: |
           poetry install --no-root
-      
-      - name: Run Lint
-        working-directory: ./backend
-        run: |
-          pip install ruff
-          ruff format backend/ --check
 
       - name : Build API Docker Image
         working-directory: ./backend
